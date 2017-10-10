@@ -17,6 +17,7 @@ class CalculationsService {
         }
 
         productInstance.quantity = totalReplenishes - totalSells
+
         return productInstance
     }
 }

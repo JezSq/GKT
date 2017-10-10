@@ -6,12 +6,13 @@ import static org.springframework.http.HttpStatus.*
 class ProductSellController {
 
     ProductSellService productSellService
-
+    CalculationsService calculationsService
+    ProductService productService
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
     def index(Integer max) {
         params.max = Math.min(max ?: 10, 100)
-        respond productSellService.list(params), model:[productSellCount: productSellService.count()]
+        respond productSellService.list(params), model: [productSellCount: productSellService.count()]
     }
 
     def show(Long id) {
@@ -30,8 +31,10 @@ class ProductSellController {
 
         try {
             productSellService.save(productSell)
+            def productInstance = productService.get(productSell.productId)
+            calculationsService.getTotalQuantity(productInstance)
         } catch (ValidationException e) {
-            respond productSell.errors, view:'create'
+            respond productSell.errors, view: 'create'
             return
         }
 
@@ -56,8 +59,10 @@ class ProductSellController {
 
         try {
             productSellService.save(productSell)
+            def productInstance = productService.get(productSell.productId)
+            calculationsService.getTotalQuantity(productInstance)
         } catch (ValidationException e) {
-            respond productSell.errors, view:'edit'
+            respond productSell.errors, view: 'edit'
             return
         }
 
@@ -66,7 +71,7 @@ class ProductSellController {
                 flash.message = message(code: 'default.updated.message', args: [message(code: 'productSell.label', default: 'ProductSell'), productSell.id])
                 redirect productSell
             }
-            '*'{ respond productSell, [status: OK] }
+            '*' { respond productSell, [status: OK] }
         }
     }
 
@@ -81,9 +86,9 @@ class ProductSellController {
         request.withFormat {
             form multipartForm {
                 flash.message = message(code: 'default.deleted.message', args: [message(code: 'productSell.label', default: 'ProductSell'), id])
-                redirect action:"index", method:"GET"
+                redirect action: "index", method: "GET"
             }
-            '*'{ render status: NO_CONTENT }
+            '*' { render status: NO_CONTENT }
         }
     }
 
@@ -93,7 +98,7 @@ class ProductSellController {
                 flash.message = message(code: 'default.not.found.message', args: [message(code: 'productSell.label', default: 'ProductSell'), params.id])
                 redirect action: "index", method: "GET"
             }
-            '*'{ render status: NOT_FOUND }
+            '*' { render status: NOT_FOUND }
         }
     }
 }

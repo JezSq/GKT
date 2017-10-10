@@ -5,8 +5,14 @@ class Customer {
     String name
 
     static hasMany = [orders:ProductSell]
+
     static constraints = {
         name()
-        orders()
+        orders(display: false)
     }
+
+    String toString(){
+        return name
+    }
+
 }

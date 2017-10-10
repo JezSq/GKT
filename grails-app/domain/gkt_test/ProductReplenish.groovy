@@ -9,5 +9,7 @@ class ProductReplenish {
     static constraints = {
         quantity()
         date()
+        product()
+        supplier()
     }
 }

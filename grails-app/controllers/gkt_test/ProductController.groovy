@@ -1,9 +1,12 @@
 package gkt_test
 
 import grails.validation.ValidationException
+
+
 import static org.springframework.http.HttpStatus.*
 
 class ProductController {
+
 
     ProductService productService
     CalculationsService calculationsService
@@ -11,17 +14,28 @@ class ProductController {
 
     def index(Integer max) {
         params.max = Math.min(max ?: 10, 100)
-        respond productService.list(params), model:[productCount: productService.count()]
+        respond productService.list(params), model: [productCount: productService.count()]
     }
 
+    def csv() {
+        def lines = Product.findAll().collect { [it.name, it.barcode, it.quantity].join(';') } as List<String>
+        def outs = []
+        lines.each { String line ->
+            outs << "${line}"
+        }
+
+        params.filename = "products.csv"
+
+        renderCsv(rows: outs, filename: params.filename, attachment: params.attachment) {
+            product { it }
+        }
+    }
+
+
     def show(Long id) {
-
-      //  respond productService.get(id)
-
-     def productInstance = productService.get(id)
-     productInstance = calculationsService.getTotalQuantity(productInstance)
-      respond productInstance
-
+        def productInstance = productService.get(id)
+        productInstance = calculationsService.getTotalQuantity(productInstance)
+        respond productInstance
     }
 
     def create() {
@@ -37,7 +51,7 @@ class ProductController {
         try {
             productService.save(product)
         } catch (ValidationException e) {
-            respond product.errors, view:'create'
+            respond product.errors, view: 'create'
             return
         }
 
@@ -63,7 +77,7 @@ class ProductController {
         try {
             productService.save(product)
         } catch (ValidationException e) {
-            respond product.errors, view:'edit'
+            respond product.errors, view: 'edit'
             return
         }
 
@@ -72,7 +86,7 @@ class ProductController {
                 flash.message = message(code: 'default.updated.message', args: [message(code: 'product.label', default: 'Product'), product.id])
                 redirect product
             }
-            '*'{ respond product, [status: OK] }
+            '*' { respond product, [status: OK] }
         }
     }
 
@@ -87,9 +101,9 @@ class ProductController {
         request.withFormat {
             form multipartForm {
                 flash.message = message(code: 'default.deleted.message', args: [message(code: 'product.label', default: 'Product'), id])
-                redirect action:"index", method:"GET"
+                redirect action: "index", method: "GET"
             }
-            '*'{ render status: NO_CONTENT }
+            '*' { render status: NO_CONTENT }
         }
     }
 
@@ -99,7 +113,7 @@ class ProductController {
                 flash.message = message(code: 'default.not.found.message', args: [message(code: 'product.label', default: 'Product'), params.id])
                 redirect action: "index", method: "GET"
             }
-            '*'{ render status: NOT_FOUND }
+            '*' { render status: NOT_FOUND }
         }
     }
 }

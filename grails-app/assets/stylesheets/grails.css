@@ -31,9 +31,7 @@ pre {
     margin-bottom: 0px;
     padding-right: 110px;
 }
-.navbar .container {
-    margin: 10px;
-}
+
 .navbar-default a {
     color: #ffffff !important;
     font-size: 18px !important;
@@ -72,11 +70,7 @@ a.navbar-brand {
     background-color: #db4800;
 }
 
-@media (min-width: 768px) {
-    .container {
-        width: auto;
-    }
-}
+
 
 /* specific to index.html */
 

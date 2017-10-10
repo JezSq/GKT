@@ -6,12 +6,14 @@ import static org.springframework.http.HttpStatus.*
 class ProductReplenishController {
 
     ProductReplenishService productReplenishService
+    CalculationsService calculationsService
+    ProductService productService
 
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
     def index(Integer max) {
         params.max = Math.min(max ?: 10, 100)
-        respond productReplenishService.list(params), model:[productReplenishCount: productReplenishService.count()]
+        respond productReplenishService.list(params), model: [productReplenishCount: productReplenishService.count()]
     }
 
     def show(Long id) {
@@ -29,9 +31,12 @@ class ProductReplenishController {
         }
 
         try {
+
             productReplenishService.save(productReplenish)
+            def productInstance = productService.get(productReplenish.productId)
+            calculationsService.getTotalQuantity(productInstance)
         } catch (ValidationException e) {
-            respond productReplenish.errors, view:'create'
+            respond productReplenish.errors, view: 'create'
             return
         }
 
@@ -56,8 +61,10 @@ class ProductReplenishController {
 
         try {
             productReplenishService.save(productReplenish)
+            def productInstance = productService.get(productReplenish.productId)
+            calculationsService.getTotalQuantity(productInstance)
         } catch (ValidationException e) {
-            respond productReplenish.errors, view:'edit'
+            respond productReplenish.errors, view: 'edit'
             return
         }
 
@@ -66,7 +73,7 @@ class ProductReplenishController {
                 flash.message = message(code: 'default.updated.message', args: [message(code: 'productReplenish.label', default: 'ProductReplenish'), productReplenish.id])
                 redirect productReplenish
             }
-            '*'{ respond productReplenish, [status: OK] }
+            '*' { respond productReplenish, [status: OK] }
         }
     }
 
@@ -81,9 +88,9 @@ class ProductReplenishController {
         request.withFormat {
             form multipartForm {
                 flash.message = message(code: 'default.deleted.message', args: [message(code: 'productReplenish.label', default: 'ProductReplenish'), id])
-                redirect action:"index", method:"GET"
+                redirect action: "index", method: "GET"
             }
-            '*'{ render status: NO_CONTENT }
+            '*' { render status: NO_CONTENT }
         }
     }
 
@@ -93,7 +100,7 @@ class ProductReplenishController {
                 flash.message = message(code: 'default.not.found.message', args: [message(code: 'productReplenish.label', default: 'ProductReplenish'), params.id])
                 redirect action: "index", method: "GET"
             }
-            '*'{ render status: NOT_FOUND }
+            '*' { render status: NOT_FOUND }
         }
     }
 }

@@ -10,5 +10,7 @@ class ProductSell {
     static constraints = {
         quantity()
         date()
+        product()
+        customer()
     }
 }
