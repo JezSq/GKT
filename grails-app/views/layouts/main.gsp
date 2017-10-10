@@ -39,6 +39,7 @@
                         <li><g:link controller="category" action="create">Sukurti naują</g:link></li>
                     </ul>
                 </li>
+
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
                        aria-haspopup="true">Prekės</a>
@@ -46,6 +47,15 @@
                         <li><g:link controller="product" action="index">Rodyti visus</g:link></li>
                         <li><g:link controller="product" action="create">Sukurti naują</g:link></li>
                         <li><g:link class="" controller="product" action="csv">Eksportuoti CSV</g:link></li>
+                    </ul>
+                </li>
+
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                       aria-haspopup="true">Gamintojai</a>
+                    <ul class="dropdown-menu">
+                        <li><g:link controller="manufacturer" action="index">Rodyti visus</g:link></li>
+                        <li><g:link controller="manufacturer" action="create">Sukurti naują</g:link></li>
                     </ul>
                 </li>
 

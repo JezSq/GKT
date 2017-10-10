@@ -8,7 +8,7 @@ class Product {
     String description
     Integer quantity
     static hasMany = [sells: ProductSell, replenishes: ProductReplenish]
-    static belongsTo = [category: Category]
+    static belongsTo = [category: Category, manufacturer: Manufacturer]
 
     static constraints = {
         name(maxSize: 50)
@@ -18,7 +18,8 @@ class Product {
         quantity(nullable: true)
         sells(display: false)
         replenishes(display: false)
-        category()
+        category(nullable: true)
+        manufacturer(nullable: true)
     }
 
     String toString(){
